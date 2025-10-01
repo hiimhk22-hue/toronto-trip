@@ -35,32 +35,24 @@ h1 { margin:8px 0 4px; font-size:28px; }
 .amount .big { font-size:20px; }
 .note { font-size:12px; color:var(--muted); }
 
-
+/* 초소형 화면에서 컨테이너 패딩만 조정 */
 @media (max-width: 360px){
   .container { padding:16px 12px 28px; }
+}
 
-/* 모바일(≤360px)에서 카드 2열 */
+/* 모바일(≤360px)에서 개인/카테고리 카드 2열 고정 */
 @media (max-width: 360px){
   #personCards,
   #catCards{
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2개씩 */
-    gap: 12px;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px !important;
   }
   #personCards .card,
   #catCards .card{
-    width: 100%;
-    margin: 0;
+    width: 100% !important;
+    margin: 0 !important;
   }
-}
-
-@media (max-width: 360px){
-  #personCards,
-  #catCards{
-    grid-template-columns: 1fr; /* 초소형 화면은 1열 */
-  }
-}
-
 }
 
 
