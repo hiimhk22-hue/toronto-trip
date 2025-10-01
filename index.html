@@ -38,6 +38,29 @@ h1 { margin:8px 0 4px; font-size:28px; }
 
 @media (max-width: 640px){
   .container { padding:16px 12px 28px; }
+
+/* 모바일(≤768px)에서 카드 2열 */
+@media (max-width: 768px){
+  #personCards,
+  #catCards{
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2개씩 */
+    gap: 12px;
+  }
+  #personCards .card,
+  #catCards .card{
+    width: 100%;
+    margin: 0;
+  }
+}
+
+@media (max-width: 360px){
+  #personCards,
+  #catCards{
+    grid-template-columns: 1fr; /* 초소형 화면은 1열 */
+  }
+}
+
 }
 
 
