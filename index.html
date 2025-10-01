@@ -41,16 +41,16 @@ h1 { margin:8px 0 4px; font-size:28px; }
 
 /* 모바일(≤360px)에서 카드 2열 */
 @media (max-width: 360px){
- #personCards,
+  #personCards,
   #catCards{
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important; /* 2개 */
-    gap: 12px !important;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2개씩 */
+    gap: 12px;
   }
   #personCards .card,
   #catCards .card{
-    width: 100% !important;
-    margin: 0 !important;
+    width: 100%;
+    margin: 0;
   }
 }
 
@@ -249,18 +249,12 @@ const krw = v => "₩" + (v*EXCHANGE).toLocaleString("ko-KR", { maximumFractionD
 const cad = v => "CA$" + v.toLocaleString('en-US', {"minimumFractionDigits":2, "maximumFractionDigits":2});
 
 
-const NAME_MAP = {
-  "중현": "아빠",
-  "태순": "엄마",
-  "태자": "태자이모",
-  "서현": "서현이모"
-};
 function renderPersonCards(){
   const wrap = document.getElementById('personCards'); wrap.innerHTML="";
   const list = [...new Set(PEOPLE_ORDER.filter(p=>DATA.people.includes(p)).concat(DATA.people))];
   list.forEach(p=>{ const v=DATA.person_totals[p]||0;
     const d=document.createElement('div'); d.className='card'; d.setAttribute('data-person', p);
-    const displayName = NAME_MAP[p] || p; d.innerHTML = `<h3>${displayName}</h3> <div class='big'>${cad(v)}</div><div class='small'>${krw(v)}</div>`; wrap.appendChild(d);
+    d.innerHTML=`<h3>${p}</h3><div class='big'>${cad(v)}</div><div class='small'>${krw(v)}</div>`; wrap.appendChild(d);
   });
   animateEntries();
 }
