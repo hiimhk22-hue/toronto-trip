@@ -41,16 +41,16 @@ h1 { margin:8px 0 4px; font-size:28px; }
 
 /* 모바일(≤360px)에서 카드 2열 */
 @media (max-width: 360px){
-  #personCards,
+ #personCards,
   #catCards{
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2개씩 */
-    gap: 12px;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important; /* 2개 */
+    gap: 12px !important;
   }
   #personCards .card,
   #catCards .card{
-    width: 100%;
-    margin: 0;
+    width: 100% !important;
+    margin: 0 !important;
   }
 }
 
@@ -261,7 +261,6 @@ function renderPersonCards(){
   list.forEach(p=>{ const v=DATA.person_totals[p]||0;
     const d=document.createElement('div'); d.className='card'; d.setAttribute('data-person', p);
     const displayName = NAME_MAP[p] || p; d.innerHTML = `<h3>${displayName}</h3> <div class='big'>${cad(v)}</div><div class='small'>${krw(v)}</div>`; wrap.appendChild(d);
-
   });
   animateEntries();
 }
