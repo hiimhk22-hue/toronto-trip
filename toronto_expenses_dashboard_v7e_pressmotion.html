@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>토론토 여행 경비 정산</title>
+<style>
+:root {
+  --bg:#f7f8fb; --card:#fff; --muted:#6b7280; --text:#111827; --radius:16px;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans KR',Arial,sans-serif; }
+.container { max-width:1040px; margin:0 auto; padding:20px 16px 40px; }
+h1 { margin:8px 0 4px; font-size:28px; }
+.sub { color:var(--muted); font-size:14px; margin-bottom:16px; }
+
+.grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; }
+.card { background:var(--card); border:1px solid #e5e7eb; border-radius:var(--radius); padding:14px; }
+.card h3 { margin:0 0 6px; font-size:14px; color:var(--muted); }
+.big { font-weight:700; font-size:22px; }
+.small { color:var(--muted); font-size:12px; }
+
+.chips { display:flex; gap:8px; flex-wrap:wrap; margin:10px 0 0; }
+.chip { padding:6px 12px; border-radius:999px; background:#eef2ff; color:#1f2937; border:1px solid #e5e7eb; cursor:pointer; }
+.chip.active { background:#111; color:#fff; border-color:#111; }
+
+.entry { background:var(--card); border:1px solid #e5e7eb; border-radius:var(--radius); padding:14px; margin:10px 0; display:flex; gap:10px; justify-content:space-between; align-items:flex-start; }
+.entry .left { display:flex; gap:10px; align-items:flex-start; }
+.badge { padding:4px 8px; border-radius:999px; border:1px solid #e5e7eb; background:#f4f4f5; font-size:12px; }
+.title { font-size:16px; font-weight:600; margin:2px 0 6px; }
+.people { display:flex; gap:6px; flex-wrap:wrap; }
+.person-pill { padding:2px 8px; border-radius:999px; font-size:12px; border:1px solid #e5e7eb; background:#f1f5f9; }
+.amount { text-align:right; min-width:120px; }
+.amount .big { font-size:20px; }
+.note { font-size:12px; color:var(--muted); }
+
+
+@media (max-width: 640px){
+  .container { padding:16px 12px 28px; }
+}
+
+
+
+
+/* ==== Category label palette (warm, low saturation pastel) ==== */
+.badge[data-cat="교통"] { background: rgba(249,115,22,.18); border-color: rgba(249,115,22,.4); color:#7A3A0D; }  /* warm orange */
+.badge[data-cat="식비"] { background: rgba(245,158,11,.18); border-color: rgba(245,158,11,.4); color:#6C4E06; }   /* amber */
+.badge[data-cat="관광"] { background: rgba(225,29,72,.18); border-color: rgba(225,29,72,.38); color:#7A162E; }    /* rose */
+.badge[data-cat="숙박"] { background: rgba(192,132,252,.20); border-color: rgba(192,132,252,.45); color:#5B21B6; }  /* soft purple */
+.badge[data-cat="쇼핑"] { background: rgba(236,72,153,.18); border-color: rgba(236,72,153,.4); color:#85144b; }    /* pink */
+.badge[data-cat="기타"] { background: rgba(217,119,6,.18); border-color: rgba(217,119,6,.4); color:#6B3D03; }      /* brownish */
+
+
+
+/* === Person color variables (match chips & cards) === */
+:root {
+  --p-중현:#3B82F6;  /* blue */
+  --p-태순:#A78BFA;  /* purple */
+  --p-태자:#22C55E;  /* green */
+  --p-서현:#F472B6;  /* pink */
+  --p-현경:#F59E0B;  /* orange */
+  --p-승현:#06B6D4;  /* cyan */
+}
+
+/* Person summary card look */
+#personCards .card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  padding-top: 12px;
+}
+
+
+
+/* Per-person theming (bg = 15% opacity, top border & dot color) */
+#personCards .card[data-person="중현"] { background: rgba(59,130,246,.15); border-color: rgba(59,130,246,.35); }
+#personCards .card[data-person="중현"]::before { content:""; position:absolute; left:0; right:0; top:0; height:4px; background: var(--p-중현); }
+#personCards .card[data-person="중현"] .name-dot { background: var(--p-중현); }
+
+#personCards .card[data-person="태순"] { background: rgba(167,139,250,.15); border-color: rgba(167,139,250,.35); }
+#personCards .card[data-person="태순"]::before { content:""; position:absolute; left:0; right:0; top:0; height:4px; background: var(--p-태순); }
+#personCards .card[data-person="태순"] .name-dot { background: var(--p-태순); }
+
+#personCards .card[data-person="태자"] { background: rgba(34,197,94,.15); border-color: rgba(34,197,94,.35); }
+#personCards .card[data-person="태자"]::before { content:""; position:absolute; left:0; right:0; top:0; height:4px; background: var(--p-태자); }
+#personCards .card[data-person="태자"] .name-dot { background: var(--p-태자); }
+
+#personCards .card[data-person="서현"] { background: rgba(244,114,182,.15); border-color: rgba(244,114,182,.35); }
+#personCards .card[data-person="서현"]::before { content:""; position:absolute; left:0; right:0; top:0; height:4px; background: var(--p-서현); }
+#personCards .card[data-person="서현"] .name-dot { background: var(--p-서현); }
+
+#personCards .card[data-person="현경"] { background: rgba(245,158,11,.15); border-color: rgba(245,158,11,.35); }
+#personCards .card[data-person="현경"]::before { content:""; position:absolute; left:0; right:0; top:0; height:4px; background: var(--p-현경); }
+#personCards .card[data-person="현경"] .name-dot { background: var(--p-현경); }
+
+#personCards .card[data-person="승현"] { background: rgba(6,182,212,.15); border-color: rgba(6,182,212,.35); }
+#personCards .card[data-person="승현"]::before { content:""; position:absolute; left:0; right:0; top:0; height:4px; background: var(--p-승현); }
+#personCards .card[data-person="승현"] .name-dot { background: var(--p-승현); }
+
+
+/* Filter chips: outlined default, filled when active with person color, no border */
+#peopleChips .chip { border:1px solid currentColor; background: transparent; color:#64748b; }
+#peopleChips .chip[data-person="중현"]{ color: var(--p-중현); }
+#peopleChips .chip[data-person="태순"]{ color: var(--p-태순); }
+#peopleChips .chip[data-person="태자"]{ color: var(--p-태자); }
+#peopleChips .chip[data-person="서현"]{ color: var(--p-서현); }
+#peopleChips .chip[data-person="현경"]{ color: var(--p-현경); }
+#peopleChips .chip[data-person="승현"]{ color: var(--p-승현); }
+#peopleChips .chip.active { border-color: transparent; color:#fff; }
+#peopleChips .chip.active[data-person="중현"]{ background: var(--p-중현); }
+#peopleChips .chip.active[data-person="태순"]{ background: var(--p-태순); }
+#peopleChips .chip.active[data-person="태자"]{ background: var(--p-태자); }
+#peopleChips .chip.active[data-person="서현"]{ background: var(--p-서현); }
+#peopleChips .chip.active[data-person="현경"]{ background: var(--p-현경); }
+#peopleChips .chip.active[data-person="승현"]{ background: var(--p-승현); }
+
+/* 전체 버튼 활성화는 딥그레이 */
+#peopleChips .chip:not([data-person]).active { background:#0f172a; color:#fff; border-color:transparent; }
+
+/* 1) 카테고리 라벨은 줄바꿈 금지 */
+.badge, #catCards h3 { white-space: nowrap; }
+
+
+/* 3) 사람 이름 라벨( pill ) 컬러를 각 사람별로 고정(단색, 테두리 동일 컬러) */
+.person-pill[data-person="중현"] { background: var(--p-중현); color:#fff; border-color: var(--p-중현); }
+.person-pill[data-person="태순"] { background: var(--p-태순); color:#fff; border-color: var(--p-태순); }
+.person-pill[data-person="태자"] { background: var(--p-태자); color:#fff; border-color: var(--p-태자); }
+.person-pill[data-person="서현"] { background: var(--p-서현); color:#fff; border-color: var(--p-서현); }
+.person-pill[data-person="현경"] { background: var(--p-현경); color:#fff; border-color: var(--p-현경); }
+.person-pill[data-person="승현"] { background: var(--p-승현); color:#fff; border-color: var(--p-승현); }
+
+
+
+#peopleChips .chip { transition: transform .12s ease, background-color .2s ease, color .2s ease, border-color .2s ease; will-change: transform; }
+#peopleChips .chip.is-pressing { transform: scale(0.96); }
+
+#entryList .entry { opacity: 0; transform: translateY(10px); transition: opacity .3s ease, transform .3s ease; }
+#entryList .entry.appear { opacity: 1; transform: translateY(0); }
+
+/* === Updated press animation === */
+#peopleChips .chip, #personCards .card[data-person] {
+  transition: transform .15s ease, background-color .2s ease, color .2s ease, border-color .2s ease;
+  will-change: transform;
+}
+#peopleChips .chip.is-pressing, #personCards .card[data-person].is-pressing {
+  transform: scale(0.92);
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>토론토 여행 경비 정산</h1><div class="sub" id="totalLine"></div>
+<h2 class="small">개인별 지출 총액</h2>
+<div class="grid" id="personCards"></div>
+<br/>
+<h2 class="small" style="margin-top:12px;">카테고리별 지출 요약</h2>
+<div class="grid" id="catCards"></div>
+<br/>
+<h2 class="small" style="margin-top:4px;">지출 상세 내역</h2>
+<div class="chips" id="peopleChips"></div>
+<div id="entryList"></div>
+</div>
+<script>
+function attachPressHandlers(){
+  const els = document.querySelectorAll('#peopleChips .chip, #personCards .card[data-person]');
+  els.forEach(el => {
+    const add = () => el.classList.add('is-pressing');
+    const rm  = () => el.classList.remove('is-pressing');
+    el.addEventListener('mousedown', add);
+    el.addEventListener('touchstart', add, {passive:true});
+    ['mouseup','mouseleave','touchend','touchcancel','blur'].forEach(ev => el.addEventListener(ev, rm));
+  });
+}
+
+const DATA = {"grand_total": 6780.09, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "person_totals": {"서현": 1461.4, "승현": 814.53, "중현": 1008.78, "태순": 1181.42, "태자": 1484.51, "현경": 826.40}, "cat_totals": {"기타": 28.0, "숙박": 1617.47, "교통": 977.40, "식비": 1667.70, "관광": 1945.37, "쇼핑": 544.14}, "entries": [{"date": "9/22", "category": "기타", "title": "비자신청", "amount": 28.0, "share": 7.0, "people": ["서현", "중현", "태순", "태자"], "memo": ""}, {"date": "9/22", "category": "숙박", "title": "콘도 게스트룸 숙박비", "amount": 750.0, "share": 375.0, "people": ["서현", "태자"], "memo": "1박 125불 (*6박)"}, {"date": "9/22", "category": "교통", "title": "택시(공항~집)", "amount": 86.3, "share": 14.38, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/23", "category": "교통", "title": "나이아가라 교통 2일권", "amount": 270.0, "share": 45.0, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": "Go Train / Wego Bus"}, {"date": "9/23", "category": "숙박", "title": "나이아가라 호텔 (우리방)", "amount": 213.05, "share": 106.53, "people": ["승현", "현경"], "memo": ""}, {"date": "9/23", "category": "숙박", "title": "나이아가라 호텔 (이모방)", "amount": 328.87, "share": 164.44, "people": ["서현", "태자"], "memo": ""}, {"date": "9/23", "category": "숙박", "title": "나이아가라 호텔 (엄빠방)", "amount": 325.55, "share": 162.78, "people": ["중현", "태순"], "memo": ""}, {"date": "9/23", "category": "식비", "title": "나이아가라 카페 빵/커피", "amount": 35.76, "share": 5.96, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/23", "category": "관광", "title": "나이아가라 폭포동굴", "amount": 194.94, "share": 32.49, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": "Journey Behind the Falls"}, {"date": "9/23", "category": "관광", "title": "나이아가라 크루즈", "amount": 194.16, "share": 48.54, "people": ["서현", "중현", "태순", "태자"], "memo": "Hornblower"}, {"date": "9/23", "category": "교통", "title": "택시 (클리프튼힐~식당)", "amount": 14.35, "share": 2.39, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/23", "category": "식비", "title": "저녁 Copa steak", "amount": 577.02, "share": 96.17, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": "브라질 스테이크"}, {"date": "9/24", "category": "관광", "title": "화이트 워터 워크", "amount": 135.6, "share": 22.6, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": "White Water Walk"}, {"date": "9/24", "category": "식비", "title": "온더레이크 점심 (태국식당)", "amount": 181.29, "share": 30.21, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/24", "category": "식비", "title": "온더레이크 COWS 아이스크림", "amount": 37.29, "share": 6.21, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/24", "category": "교통", "title": "택시(기차역~집)", "amount": 19.02, "share": 3.17, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/24", "category": "식비", "title": "장보기", "amount": 61.79, "share": 10.3, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": "채소, 과일, 고기"}, {"date": "9/25", "category": "교통", "title": "택시 (집~미술관)", "amount": 22.45, "share": 3.74, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/25", "category": "관광", "title": "미술관티켓", "amount": 60.0, "share": 10.0, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/25", "category": "식비", "title": "피자 PIZZAIOLO", "amount": 45.38, "share": 7.56, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/25", "category": "식비", "title": "커피 (팀홀튼)", "amount": 21.0, "share": 3.0, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/25", "category": "교통", "title": "택시 (토론토대학교~집)", "amount": 21.2, "share": 3.53, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/25", "category": "식비", "title": "로블로스 장보기", "amount": 41.08, "share": 6.85, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": "35.90 (장보기) + 5.18 (머핀2개)"}, {"date": "9/25", "category": "쇼핑", "title": "드럭스토어", "amount": 24.0, "share": 24.0, "people": ["서현"], "memo": "멜라토닌"}, {"date": "9/25", "category": "쇼핑", "title": "드럭스토어", "amount": 8.0, "share": 8.0, "people": ["중현"], "memo": "샤워타올"}, {"date": "9/26", "category": "교통", "title": "알곤퀸 렌트카", "amount": 326.93, "share": 54.49, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": "276.93 (렌트비) + 50.00 (주행거리 무제한)"}, {"date": "9/26", "category": "교통", "title": "렌트카 주유비", "amount": 88.38, "share": 14.73, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": "61.75 + 26.63"}, {"date": "9/26", "category": "관광", "title": "돌셋 전망대", "amount": 18.55, "share": 3.09, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/26", "category": "관광", "title": "알곤퀸 입장료", "amount": 42.0, "share": 7.0, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/26", "category": "식비", "title": "한식당 조선옥", "amount": 163.35, "share": 27.22, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/26", "category": "식비", "title": "갤러리아 장보기", "amount": 125.18, "share": 62.59, "people": ["중현", "태순"], "memo": "쌍화차, 도라지청 포함"}, {"date": "9/27", "category": "쇼핑", "title": "기념품 (디자인스토어)", "amount": 24.86, "share": 24.86, "people": ["태자"], "memo": "토론토 패브릭"}, {"date": "9/27", "category": "쇼핑", "title": "기념품 (디자인스토어)", "amount": 73.44, "share": 73.44, "people": ["서현"], "memo": "선영 노트, 토론토 패브릭 등"}, {"date": "9/27", "category": "관광", "title": "2층버스+크루즈", "amount": 598.38, "share": 99.73, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/27", "category": "식비", "title": "점심 (샌드위치+스파게티)", "amount": 89.84, "share": 14.97, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": "세인트로렌스 마켓에서 야외테이블"}, {"date": "9/27", "category": "식비", "title": "점심 (커피)", "amount": 9.8, "share": 1.63, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": "커피"}, {"date": "9/27", "category": "쇼핑", "title": "기념품 (세인트로렌스마켓)", "amount": 138.36, "share": 138.36, "people": ["태순"], "memo": ""}, {"date": "9/27", "category": "쇼핑", "title": "기념품 (세인트로렌스마켓)", "amount": 89.2, "share": 89.2, "people": ["태자"], "memo": ""}, {"date": "9/27", "category": "쇼핑", "title": "기념품 (세인트로렌스마켓)", "amount": 14.68, "share": 14.68, "people": ["서현"], "memo": ""}, {"date": "9/27", "category": "관광", "title": "CN타워 회전레스토랑", "amount": 701.74, "share": 116.96, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": "360 Restaurant + 전망대"}, {"date": "9/28", "category": "식비", "title": "브런치", "amount": 236.81, "share": 39.47, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": "The Dorset"}, {"date": "9/28", "category": "쇼핑", "title": "기념품 (차이나타운)", "amount": 54.15, "share": 54.15, "people": ["태순"], "memo": ""}, {"date": "9/28", "category": "쇼핑", "title": "기념품 (차이나타운)", "amount": 71.15, "share": 71.15, "people": ["태자"], "memo": ""}, {"date": "9/28", "category": "쇼핑", "title": "기념품 (차이나타운)", "amount": 46.3, "share": 46.3, "people": ["서현"], "memo": ""}, {"date": "9/28", "category": "교통", "title": "택시 (켄싱턴~카사로마)", "amount": 18.51, "share": 3.09, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/28", "category": "식비", "title": "카사로마 간식", "amount": 18.39, "share": 3.68, "people": ["서현", "승현", "중현", "태순", "현경"], "memo": "아이스크림 15, 탄산수 3.39"}, {"date": "9/28", "category": "식비", "title": "간식 가라아게", "amount": 23.73, "share": 11.87, "people": ["중현", "현경"], "memo": ""}, {"date": "9/28", "category": "교통", "title": "택시 (카사로마~집)", "amount": 23.08, "share": 3.85, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}, {"date": "9/29", "category": "교통", "title": "택시 (집~공항)", "amount": 87.18, "share": 14.53, "people": ["서현", "승현", "중현", "태순", "태자", "현경"], "memo": ""}]};
+const EXCHANGE = 1010; // 1 CAD -> KRW
+
+// === normalize to 2 decimals ===
+(function(){
+  function r2(x){ return Math.round((x + Number.EPSILON) * 100) / 100; }
+  DATA.grand_total = r2(DATA.grand_total);
+  Object.keys(DATA.person_totals).forEach(k=> DATA.person_totals[k]=r2(DATA.person_totals[k]));
+  Object.keys(DATA.cat_totals).forEach(k=> DATA.cat_totals[k]=r2(DATA.cat_totals[k]));
+  DATA.entries = DATA.entries.map(e=> Object.assign(e, {amount:r2(e.amount), share:r2(e.share)}));
+})();
+
+const PEOPLE_ORDER = ["중현","태순","태자","서현","현경","승현"];
+const CAT_ORDER = ["숙박","쇼핑","관광","기타","식비","교통"];
+
+function attachChipPressHandlers(){
+  document.querySelectorAll('#peopleChips .chip').forEach(ch => {
+    const add = () => ch.classList.add('is-pressing');
+    const rm  = () => ch.classList.remove('is-pressing');
+    ch.addEventListener('mousedown', add);
+    ch.addEventListener('touchstart', add, {passive:true});
+    ['mouseup','mouseleave','touchend','touchcancel','blur'].forEach(ev => ch.addEventListener(ev, rm));
+  });
+  animateEntries();
+}
+
+function attachPersonCardClickHandlers(){
+  document.querySelectorAll('#personCards .card[data-person]').forEach(card => {
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', () => {
+      const who = card.getAttribute('data-person');
+      if(!who) return;
+      activePerson = who;
+      renderPeopleChips();
+      attachPressHandlers();
+      renderEntries();
+      // Smooth scroll to filter bar for context on mobile
+      const bar = document.getElementById('peopleChips');
+      if(bar){ bar.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+    });
+  });
+}
+
+function animateEntries(){
+  const rows = document.querySelectorAll('#entryList .entry');
+  rows.forEach((el, i) => { setTimeout(() => el.classList.add('appear'), 15 * i); });
+}
+
+
+const krw = v => "₩" + (v*EXCHANGE).toLocaleString("ko-KR", { maximumFractionDigits: 0 });
+const cad = v => "CA$" + v.toLocaleString('en-US', {"minimumFractionDigits":2, "maximumFractionDigits":2});
+
+
+function renderPersonCards(){
+  const wrap = document.getElementById('personCards'); wrap.innerHTML="";
+  const list = [...new Set(PEOPLE_ORDER.filter(p=>DATA.people.includes(p)).concat(DATA.people))];
+  list.forEach(p=>{ const v=DATA.person_totals[p]||0;
+    const d=document.createElement('div'); d.className='card'; d.setAttribute('data-person', p);
+    d.innerHTML=`<h3>${p}</h3><div class='big'>${cad(v)}</div><div class='small'>${krw(v)}</div>`; wrap.appendChild(d);
+  });
+  animateEntries();
+}
+
+const EMO = {"숙박":"🛌","쇼핑":"🛍️","관광":"🎭","기타":"📋","식비":"🍽️","교통":"🚕"};
+function renderCatCards(){
+  const wrap=document.getElementById('catCards'); wrap.innerHTML="";
+  CAT_ORDER.forEach(c=>{ const v=DATA.cat_totals[c]||0;
+    const d=document.createElement('div'); d.className='card';
+    d.innerHTML = `<h3>${EMO[c]||""} ${c}</h3><div class='big'>${cad(v)}</div><div class='small'>${krw(v)}</div>`; wrap.appendChild(d);
+  });
+  animateEntries();
+}
+
+let activePerson='ALL';
+function renderPeopleChips(){
+  const wrap=document.getElementById('peopleChips'); wrap.innerHTML="";
+  const mk=(label,val)=>{ const b=document.createElement('button'); b.className='chip'+(val===activePerson?' active':''); b.textContent=label; if(val!=='ALL'){ b.setAttribute('data-person', val); } b.onclick=()=>{activePerson=val; renderPeopleChips(); attachPressHandlers(); attachPersonCardClickHandlers(); renderEntries();}; return b; };
+  wrap.appendChild(mk('전체','ALL'));
+  const list=[...new Set(PEOPLE_ORDER.filter(p=>DATA.people.includes(p)).concat(DATA.people))];
+  list.forEach(n=>wrap.appendChild(mk(n,n)));
+}
+
+function renderEntries(){
+  const wrap=document.getElementById('entryList'); wrap.innerHTML="";
+  const items=DATA.entries.slice().sort((a,b)=>{const ai=CAT_ORDER.indexOf(a.category), bi=CAT_ORDER.indexOf(b.category); return (ai-bi)||a.date.localeCompare(b.date);});
+  items.forEach(e=>{ if(activePerson!=='ALL' && !e.people.includes(activePerson)) return;
+    const d=document.createElement('div'); d.className='entry';
+    const left=document.createElement('div'); left.className='left';
+    left.innerHTML=`<div class='badge' data-cat='${e.category}'>${e.category}</div>
+    <div><div class='small' style='opacity:.75;'>${e.date}</div><div class='title'>${e.title}</div><div class='people'></div></div>`;
+    const box=left.querySelector('.people'); e.people.forEach(p=>{const s=document.createElement('span'); s.className='person-pill'; s.setAttribute('data-person', p); s.textContent=p; box.appendChild(s);});
+    const right=document.createElement('div'); right.className='amount';
+    right.innerHTML=`<div class='big'>${cad(e.amount)}</div><div class='note'>개인부담금 $${e.share.toFixed(2)}</div>`;
+    d.appendChild(left); d.appendChild(right); wrap.appendChild(d);
+  });
+  animateEntries();
+}
+
+renderPersonCards(); renderCatCards(); renderPeopleChips(); attachPressHandlers(); attachPersonCardClickHandlers(); renderEntries();
+// write total line
+document.getElementById('totalLine').textContent = "총 지출 금액: $" + DATA.grand_total.toFixed(2);
+
+</script>
+</body>
+</html>
