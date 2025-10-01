@@ -276,12 +276,8 @@ function renderEntries(){
   items.forEach(e=>{ if(activePerson!=='ALL' && !e.people.includes(activePerson)) return;
     const d=document.createElement('div'); d.className='entry';
     const left=document.createElement('div'); left.className='left';
-    
-    left.innerHTML=`<div class='small date' style='opacity:.75;>${e.date}</div>
-    <div class='badge' data-cat='${e.category}'>${e.category}</div>
-    <div class='title'>${e.title}</div>
-    <div class='people'></div>`;
-                    
+    left.innerHTML=`<div class='badge' data-cat='${e.category}'>${e.category}</div>
+    <div><div class='small' style='opacity:.75;'>${e.date}</div><div class='title'>${e.title}</div><div class='people'></div></div>`;
     const box=left.querySelector('.people'); e.people.forEach(p=>{const s=document.createElement('span'); s.className='person-pill'; s.setAttribute('data-person', p); s.textContent=p; box.appendChild(s);});
     const right=document.createElement('div'); right.className='amount';
     right.innerHTML=`<div class='big'>총지출 ${cad(e.amount)}</div><div class='note'>개인부담금 $${e.share.toFixed(2)}</div>`;
